@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8"/>
+			<title>Consultas</title>
+			<link rel="icon" href="./img/browse1_LEIDYMG.ico">
+			<link rel="stylesheet" type="text/css" href="./css/consultas.css">
+	</head>
+	<body>
+
+			<div id="header">
+			<header>
+				<h1>Desconecta mientras puedas</h1>
+			</header>
+			</div>
+			
+			<div id="container">
+			
+			<div id="subheader">
+					<ul class="lista">
+						<li><a href="index.html">Página principal</a></li>
+						<li><a href="blog.html">Blog</a></li>
+						<li><a href="contacto.html">Contacto</a></li>
+						<li><a href="rrss.html">RRSS</a></li>
+					</ul>
+
+			</div>
+			
+			<div class="clear">
+				<section id="contenido">
+					<article class="article">
+						<h2>Revisa nuestras consultas del Ayuntamiento</h2>
+						<p>Aquí están algunas de las consultas realizadas en la base de datos del Ayto. de Madrid</p>
+					</article>
+					<br/>
+					<br/>
+					<div class="uno">
+						<h4>Primera consulta</h4>
+						<br/>
+					<p>
+					{
+					for $event in doc("agenda_v1_es_impares.xml")/serviceList/service
+						let $horario:=$event/extradata/item[@name="Horario"]
+						where matches($event/basicData/name, "^[Horario].+") 
+						and $horario != "<p>Consultar web oficial</p>" 
+						and $horario != "<p><!-- x-tinymce/html --></p>" 
+						and $horario != "Not available" 
+						and $horario != "<p>Consultar</p>" 
+						and not(matches($horario, '^&lt;p&gt;Consultar &lt;a href=.*web oficial&lt;/a&gt;&lt;/p&gt;$')) 
+						and not(matches($horario, "&lt;p&gt;Consultar (en )?web oficial( y redes sociales\.)?&lt;/p&gt;")) 
+						and not (matches ($horario, "Consultar <a href=&quot;http://www.azoteadelcirculo.com/&quot;>web oficial</a>"))
+						group by $num:=$event/..
+					return count($event)
+					}
+					</p>
+					</div>	
+					<div class="dos">
+						<h4>Segunda consulta</h4>
+						<br/>
+						<p>   
+						for $event in doc("agenda_v1_es_impares.xml")/serviceList/service
+						where $event/geoData/zipcode/text() = 28013 
+						and matches($event/basicData/name, "^[Centro].+")
+						group by $num:=$event/..
+						return count($event)
+						</p>
+					</div>
+					<div class="tres">
+						<h4>Tercera consulta</h4>
+						<br/>
+						<p>        
+							let $nums:=(
+							for $event in doc("agenda_v1_es_impares.xml")/serviceList/service/basicData
+							where matches($event/name, "^[Fijo].+") 
+							and matches($event/phone/text(),"^[\(]?\+34[\)]? +91.*")
+							return $event/name
+							)
+							return count($nums)
+					</p>
+					</div>	
+					<div class="cuatro">
+						<h4>Cuarta consulta</h4>
+						<br/>
+						<p>        
+							let $nums:=(for $event in doc("agenda_v1_es_impares.xml")/serviceList/service/basicData
+							where matches($event/name, "^[Tarjeta].+") and exists($event/../extradata/item[@name="Servicios de pago"])
+							return $event/name)
+							return count($nums)
+					</p>
+					</div>	
+					<div class="cinco">
+						<h4>Quinta consulta</h4>
+						<br/>
+						<p>        
+							let $cats:=(
+							for $event in doc("agenda_v1_es_impares.xml")/serviceList/service
+							where matches($event/basicData/name, "^[Categorías].+")
+							group by $c:=$event/extradata/categorias/categoria[1]/item[@name="Categoria"]/text()
+							return $c
+							)						
+							return count($cats
+						</p>
+					</div>	
+
+				</section>
+			
+				<aside>
+					<h3><a href="blog.html">Nuestro blog de noticias</a></h3>
+					<h3><a href="registro.html">Regístrate</a></h3>
+					<h3><a href="Nuevo_Consultas_de_BaseX.html">¡Nuevo!Revisa nuestras consultas del Ayuntamiento</a></h3>
+					<video width="240" height="180">
+					<source src="./video/chill.mp4" type="video/mp4" />
+					<source src="./video/chill.webm" type="video/webm" />
+					De Chill
+					</video>
+
+					
+					<form>
+						<input type="text"/>
+						<input type="submit" value="buscar"/>
+					</form>
+				</aside>
+				
+				<div class="clear">
+					
+				</div>
+
+					<footer>
+						<a href="contacto.html">Contacta con nosotros</a>
+						Leidy MG &copy; 2022 Todos los derechos reservados
+					</footer>
+			</div>
+
+			
+		</div> 
+
+</body>
+</html>
